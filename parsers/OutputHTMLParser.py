@@ -1,7 +1,7 @@
 from HTMLParser import HTMLParser
 from htmlentitydefs import name2codepoint
 
-class OutputHTMLParser(HTMLParser):
+class OutputHtmlParser(HTMLParser):
 
 	def __init__(self, file):
 		HTMLParser.__init__(self)

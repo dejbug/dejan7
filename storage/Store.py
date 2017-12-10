@@ -15,6 +15,9 @@ class Store(object):
 		self.path = path
 		self.file = None
 
+	def __iter__(self):
+		return self.enum()
+
 	def __enter__(self):
 		return self.open()
 
@@ -61,9 +64,9 @@ class Store(object):
 
 	def enum(self, ext=None, case_sensitive=False):
 		if ext:
-			ext_ = ext.lower()
-			has_ext_s = lambda p: p.endswith(ext)
-			has_ext_i = lambda p: p.lower().endswith(ext_)
+			ext_ = ext.lower() if ext else None
+			has_ext_s = lambda p: p.endswith(ext) if ext else True
+			has_ext_i = lambda p: p.lower().endswith(ext_) if ext_ else True
 			has_ext = has_ext_s if case_sensitive else has_ext_i
 			pp = (p for p in self.file.namelist() if has_ext(p))
 		else:

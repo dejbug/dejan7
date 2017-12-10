@@ -3,7 +3,7 @@ import requests
 from dejan7.decorators.Pickleable import *
 # from dejan7.snippets import web
 
-from MemoryHTMLParser import *
+from MemoryHtmlParser import *
 from ParserResult import *
 
 @Pickleable(".parser-job", "url")
@@ -19,6 +19,6 @@ class ParserJob(object):
 		if not url: url = self.url
 		# r = web.fetch(url)
 		r = requests.get(url)
-		parser = MemoryHTMLParser()
+		parser = MemoryHtmlParser()
 		parser.feed(r.text)
 		return ParserResult(self, parser.stack)

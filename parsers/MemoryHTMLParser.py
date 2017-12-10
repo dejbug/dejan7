@@ -29,7 +29,7 @@ class CharRef(object): pass
 @NamedTuple("text")
 class Decl(object): pass
 
-class MemoryHTMLParser(HTMLParser):
+class MemoryHtmlParser(HTMLParser):
 
 	def __init__(self, mutable_seq=[]):
 		HTMLParser.__init__(self)
