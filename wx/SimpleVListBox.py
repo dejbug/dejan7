@@ -22,6 +22,7 @@ class SimpleVListBox(wx.VListBox):
 		self.items = items
 		self.SetItemCount(len(self.items))
 		self.ScrollToRow(0)
+		self.Refresh()
 
 	def CopyItemToClipboard(self, n, transform=unicode):
 		try: it = self.items[n]
