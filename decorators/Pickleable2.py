@@ -9,6 +9,6 @@ def Pickleable2(ext=".pickle", keys=None):
 		setattr(cls, "pickle_to_file", lambda self, file: Pickler.save_to_file(file, self))
 		setattr(cls, "pickle_to_path", lambda self, path: Pickler.save_to_path(self.derive_pickle_path(), self))
 		if not hasattr(cls, "derive_pickle_path"):
-			return Pickleable1(keys)(cls)
+			return Pickleable1(ext, keys)(cls)
 		return cls
 	return _
