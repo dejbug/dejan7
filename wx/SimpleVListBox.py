@@ -9,8 +9,8 @@ from dejan7.wx.helpers.VirtualHelper import *
 @EventSource("ItemSelect")
 class SimpleVListBox(wx.VListBox):
 
-	def __init__(self, parent, row_height=42):
-		wx.VListBox.__init__(self, parent)
+	def __init__(self, parent, row_height=42, multisel=False):
+		wx.VListBox.__init__(self, parent, style=wx.LB_MULTIPLE if multisel else 0)
 		self.vh = VirtualHelper(cy=row_height)
 		self.items = []
 
