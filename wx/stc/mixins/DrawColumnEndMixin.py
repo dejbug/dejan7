@@ -1,5 +1,3 @@
-import threading
-
 import wx
 import wx.stc
 
@@ -12,7 +10,6 @@ class DrawColumnEndMixin(object):
 		self.sci = parent
 		self.pen = wx.Pen(color)
 		self.margins = margins
-		self.timer = None
 
 		self.DelayedPaint = DelayedCall(self.Paint, delay)
 
@@ -28,8 +25,6 @@ class DrawColumnEndMixin(object):
 		self.Paint()
 
 	def Paint(self):
-		self.timer = None
-
 		th = self.sci.TextHeight(0)
 
 		dc = wx.ClientDC(self.sci)
