@@ -8,9 +8,9 @@ class StatusBarTimeoutHelper(object):
 
 	def __init__(self, parent):
 		self.parent = parent
-		
+
 		self.popup_status_bar = PopupStatusBar(parent)
-		
+
 		self.timeout_helper = TimeoutHelper()
 		self.timeout_helper.Subscribe("cancel", self.OnTimeoutHelperCancel)
 		self.timeout_helper.Subscribe("timeout", self.OnTimeoutHelperTimeout)

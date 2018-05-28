@@ -3,7 +3,7 @@ import wx
 from dejan7.wx.Accels import *
 from dejan7.wx.helpers.StatusBarTimeoutHelper import *
 from dejan7.wx.mixins.NoEraseBackgroundMixin import *
-		
+
 
 class FrameBase(wx.Frame):
 

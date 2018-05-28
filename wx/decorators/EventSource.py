@@ -2,14 +2,18 @@ import wx
 import wx.lib.pubsub
 import wx.lib.newevent
 
-## This class uses pubsub.
+
 def EventSourcePS(decorated):
+	"""This decorator uses pubsub. It is a simple wrapper around the
+	already simple pubsub subscribe/sendMessage API. Instead of
+	those two methods, we provide Subscribe() and PostEvent().
+	"""
 
 	# to_tuple_form = lambda s: [
 	# 	n for n in map(lambda s: s.strip(), decorated.__name__.split(".")) if n
 	# ]
 	# root_event_id = to_tuple_form(decorated.__name__)
-	
+
 	root_event_id = decorated.__name__
 
 	# def Subscribe(obj, event_id, callback):
@@ -18,8 +22,17 @@ def EventSourcePS(decorated):
 	## Subscribe(event_cb)
 	## Subscribe(event_id, event_cb)
 	def Subscribe(obj, *aa, **kk):
-		## NOTE: kwargs override args.
-		## TODO: 'event_id' should really be called sub_event_id.
+		"""Subscribe to a all or a specific event.
+
+			Valid forms:
+				Subscribe(event_cb) -- subscribe to all events
+				Subscribe(event_id, event_cb) -- subscribe to one event
+			Params:
+				event_id -- An event's id (must be a string).
+				event_cb -- The callback in case of event_id.
+
+			NOTE: kwargs override args.
+		"""
 
 		if "event_id" in kk:
 			event_id = root_event_id + "." + kk["event_id"]
@@ -45,11 +58,15 @@ def EventSourcePS(decorated):
 		wx.lib.pubsub.pub.subscribe(event_cb, event_id)
 
 	def PostEvent(obj, *aa, **kk):
+		"""Valid forms:
+			PostEvent(event_id, **kwargs)
+			PostEvent(**kwargs)
+		"""
 		if aa:
 			event_id = root_event_id + "." + aa[0]
 		else:
 			event_id = root_event_id
-		
+
 		# import pdb; pdb.set_trace()
 		wx.lib.pubsub.pub.sendMessage(event_id, **kk)
 
@@ -59,8 +76,42 @@ def EventSourcePS(decorated):
 	return decorated
 
 
-## This class uses newevent
 def EventSourceNE(decorated):
+	"""This class uses newevent. It is provided for cases where
+	EventSourcePS.PostEvent() doesn't work, e.g. from threading.Thread.run().
+
+	Example:
+
+	from dejan7.wx.decorators.EventSource import EventSourceNE
+
+	@EventSourceNE
+	class ThreadedDirlistLoader(object):
+		def __init__(self):
+			self.worker = None
+			self.Event.SetToStringFormat("items")
+
+		def Start(self, path):
+			if self.worker:
+				self.worker.join()
+
+			self.worker = threading.Thread(target=self.Main, args=(path, ))
+			self.worker.daemon = True
+			self.worker.start()
+
+		def Main(self, path):
+			items = tuple(os.path.join(path, item) for item in os.listdir(path))
+			self.PostEvent(items=items)
+
+	class Frame(wx.Frame):
+
+		def __init__(self):
+			# ...
+			self.Bind(ThreadedDirlistLoader.EVT, self.OnThreadedDirlistLoaderEvent)
+
+		def OnThreadedDirlistLoaderEvent(self, e):
+			print e
+
+	"""
 
 	def PostEvent(obj, *aa, **kk):
 		if aa: aa[0].AddPendingEvent(obj.Event(wx.ID_ANY, **kk))
@@ -68,7 +119,11 @@ def EventSourceNE(decorated):
 
 	def SetToStringFormat(obj, keys):
 		"""Call this e.g. from the decorated class's ctor to alter
-		the way the Event object will print itself."""
+		the way the Event object will print itself. If keys is None,
+		the Event object's entire __dict__ will be printed. If keys
+		is "" then all will be omitted. If it is a string like e.g.
+		"self _cookie" then only self and __cookie will be included
+		in the printout."""
 
 		if isinstance(keys, str):
 			keys = tuple(key for key in keys.split() if key)
@@ -93,7 +148,7 @@ def EventSourceNE(decorated):
 						str({k:v for k,v in self.__dict__.items() if k in keys})[1:-1]
 					)
 			)
-			
+
 	Event, EVT = wx.lib.newevent.NewCommandEvent()
 
 	setattr(decorated, "Event", Event)
