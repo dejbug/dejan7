@@ -1,6 +1,7 @@
 # import collections
 
 def extend_missing_with_value(aa, bb, value=None):
+	assert isinstance(bb, list)
 	missing = len(aa) - len(bb)
 	if missing > 0: bb.extend([value] * missing)
 	return bb
@@ -10,7 +11,7 @@ def zip_extend(aa, values=[], *bbb):
 	return zip(aa, *[extend_missing_with_value(aa, bb, values[i]) for i, bb in enumerate(bbb)])
 
 def apply_args_to_obj(obj, nn, *aa, **kk):
-	extend_missing_with_value(nn, aa, None)
+	extend_missing_with_value(nn, list(aa), None)
 	# dd = collections.OrderedDict(zip(nn, aa))
 	dd = dict(zip(nn, aa))
 	dd.update(kk)

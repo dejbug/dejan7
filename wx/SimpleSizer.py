@@ -24,16 +24,26 @@ class SimpleSizer(wx.BoxSizer):
 	@classmethod
 	def new(cls, code, *aa, **kk):
 
-		assert 4 == len(code)
-		assert code[0] in "LRTB"
-		assert code[1] in "HRB"
-		assert code[2] in "VH"
-		assert code[3] in "VH"
+		assert 3 == len(code)
+		
+		# "heaviness" : Left, Right, Top, Bottom,
+		#	Vertical (Top + Bottom), or
+		#	Horizontal (Left + Right)
+		assert code[0] in "LRTBVH"
+		
+		# "visibility": visible or hidden
+		assert code[1] in "VH" # 1st visible or hidden
+		assert code[2] in "VH" # 2nd visible or hidden
 
-		s = cls(*aa, leftHeavy="L" == code[0], rightHeavy="R" == code[0], topHeavy="T" == code[0] or "T" == code[1], bottomHeavy="B" == code[0] or "B" == code[1], **kk)
+		s = cls(*aa,
+			leftHeavy=(code[0] in "LH"),
+			rightHeavy=(code[0] in "RH"),
+			topHeavy=(code[0] in "TV"),
+			bottomHeavy=(code[0] in "BV"),
+			**kk)
 
-		if not "V" == code[2]: s.SetFirstVisible(False)
-		if not "V" == code[3]: s.SetSecondVisible(False)
+		if not "V" == code[1]: s.SetFirstVisible(False)
+		if not "V" == code[2]: s.SetSecondVisible(False)
 
 		return s
 
@@ -57,11 +67,13 @@ class SimpleSizer(wx.BoxSizer):
 	def SetFirstVisible(self, on=True, recursive=False, refresh=True):
 		if on: self.Show(0, recursive=recursive)
 		else: self.Hide(0, recursive=recursive)
+		if on: self.GetFirst().SetFocus()
 		if refresh: self.Layout()
 
 	def SetSecondVisible(self, on=True, recursive=False, refresh=True):
 		if on: self.Show(1, recursive=recursive)
 		else: self.Hide(1, recursive=recursive)
+		if on: self.GetSecond().SetFocus()
 		if refresh: self.Layout()
 
 	def ToggleFirstVisible(self, recursive=False, refresh=True):
@@ -70,7 +82,8 @@ class SimpleSizer(wx.BoxSizer):
 	def ToggleSecondVisible(self, recursive=False, refresh=True):
 		self.SetSecondVisible(not self.IsSecondVisible(), recursive, refresh)
 
-	def ToggleVisible(self, recursive=False, refresh=True):
-		self.SetFirstVisible(not self.IsFirstVisible(), recursive, refresh)
-		self.SetSecondVisible(not self.IsSecondVisible(), recursive, refresh)
+	def ToggleVisible(self, recursive=False):
+		self.SetFirstVisible(not self.IsFirstVisible(), recursive, False)
+		self.SetSecondVisible(not self.IsSecondVisible(), recursive, False)
 		self.Layout()
+		

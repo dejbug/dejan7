@@ -13,6 +13,7 @@ class Accels(wx.EvtHandler):
 		self.callbacks = []
 
 	def Add(self, key, mod=wx.ACCEL_NORMAL, cb=None):
+		if mod is None: mod = wx.ACCEL_NORMAL
 		self.last_id += 1
 		id = self.last_id
 		self.entries.append(wx.AcceleratorEntry(mod, key, id))
