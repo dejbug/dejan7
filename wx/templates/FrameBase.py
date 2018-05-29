@@ -39,4 +39,4 @@ class FrameBase(wx.Frame):
 		else: self.Unbind(wx.EVT_UPDATE_UI)
 
 	def OnUpdateUi(self, e):
-		raise NotImplementedError
+		print __file__, "| OnUpdateUi |", e

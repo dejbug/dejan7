@@ -13,7 +13,7 @@ class ToolBar(wx.ToolBar):
 		self.last_tool_id = 0
 
 	def _default_calllback(self, e):
-		print e
+		print __file__, "| _default_callback |", e
 
 	def Install(self):
 		self.Realize()
